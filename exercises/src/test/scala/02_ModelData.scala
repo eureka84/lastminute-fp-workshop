@@ -4,7 +4,7 @@ import minitest._
 
 /*
  * In OOP model object that incapsulate data and expose behaviours.
- * This two concepts are brigs togheter thanks to class definitions.
+ * This two concepts are brigs together thanks to class definitions.
  *
  * In FP data and behaviours are modelled with two different tools:
  * - Algebraic Data Type (ADT) to model data
@@ -49,6 +49,15 @@ object ModelData extends SimpleTestSuite {
    *
    * ADD YOUR CODE HERE INSIDE THE OBJECT
    */
+
+  sealed trait Seed
+  case object Clubs extends Seed
+  case object Cups extends Seed
+  case object Diamonds extends Seed
+  case object Swords extends Seed
+
+  case class Card(value: Int, seed: Seed)
+  case class Player(name: String, cards: List[Card])
 
   test("represent initial match state") {
     ignore("build the first player w/ 2 of Golds, 5 of Swords and 7 of Clubs")
