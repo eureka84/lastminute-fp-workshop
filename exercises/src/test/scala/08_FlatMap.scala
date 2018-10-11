@@ -47,7 +47,7 @@ object FlatMapTests extends SimpleTestSuite {
       else throw DivByZeroException()
 
   val divTry: Int => Try[Int] =
-    n => ???
+    n => Try(div(n))
 
   val tos: Int => String =
     n => n.toString
@@ -62,7 +62,7 @@ object FlatMapTests extends SimpleTestSuite {
 
   test("chain mix pure and effectful functions") {
     val program: String => Try[String] =
-      s => toi(s).map(dec).map(div).map(tos)
+      s => toi(s).map(dec).flatMap(divTry).map(tos)
 
     val result = program("10")
     assertEquals(result, Success("1"))
@@ -70,7 +70,7 @@ object FlatMapTests extends SimpleTestSuite {
 
   test("fail safe - on first operaton") {
     val program: String => Try[String] =
-      s => toi(s).map(dec).map(div).map(tos)
+      s => toi(s).map(dec).flatMap(divTry).map(tos)
 
     val result = program("foo")
     assertEquals(result, Failure(NotAnIntException("foo")))
@@ -78,7 +78,7 @@ object FlatMapTests extends SimpleTestSuite {
 
   test("fail safe - on the middle operation") {
     val program: String => Try[String] =
-      s => toi(s).map(dec).map(div).map(tos)
+      s => toi(s).map(dec).flatMap(divTry).map(tos)
 
     val result = program("1")
     assertEquals(result, Failure(DivByZeroException()))
