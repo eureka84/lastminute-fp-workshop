@@ -13,32 +13,44 @@ import minitest._
 
 object PatternMatchDispatch extends SimpleTestSuite {
 
-  /*
-   * TODO: rewrite the dispatch logic
-   *       from polymorphic dispatch (a fundamental OOP technique)
-   *       to pattern match dispatch.
-   *       Keep tests green.
-   */
+  sealed trait Direction {
+    def turnRight: Direction = this match {
+      case N() => E()
+      case E() => S()
+      case S() => W()
+      case W() => N()
+    }
+    def turnLeft: Direction = this match {
+      case N() => W()
+      case W() => S()
+      case S() => E()
+      case E() => N()
+    }
+  }
+  case class N() extends Direction
+  case class E() extends Direction
+  case class W() extends Direction
+  case class S() extends Direction
 
-  trait Direction {
-    def turnRight: Direction
-    def turnLeft: Direction
-  }
-  case class N() extends Direction {
-    def turnRight: Direction = E()
-    def turnLeft: Direction  = W()
-  }
-  case class E() extends Direction {
-    def turnRight: Direction = S()
-    def turnLeft: Direction  = N()
-  }
-  case class W() extends Direction {
-    def turnRight: Direction = N()
-    def turnLeft: Direction  = S()
-  }
-  case class S() extends Direction {
-    def turnRight: Direction = W()
-    def turnLeft: Direction  = E()
+  // Alternative style, same implementation
+  // but place it in the companion object
+  object Direction {
+
+    def turnRight(current: Direction): Direction =
+      current match {
+        case N() => E()
+        case E() => S()
+        case S() => W()
+        case W() => N()
+      }
+
+    def turnLeft(current: Direction): Direction =
+      current match {
+        case N() => W()
+        case W() => S()
+        case S() => E()
+        case E() => N()
+      }
   }
 
   test("turn right") {
