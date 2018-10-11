@@ -49,17 +49,16 @@ object FreezeTests extends SimpleTestSuite {
     type Num = () => Int
 
     def num(x: Int): Num =
-      ???
+      () => x
 
     def plus(x: Num, y: Num): Num =
-      ???
+      () => x() + y()
 
     def times(x: Num, y: Num): Num =
-      ???
+      () => x() * y()
   }
 
   test("split building a program from executing it") {
-    ignore("implements SplitBuildFromExecute functions")
     import SplitBuildFromExecute._
     val program = times(plus(num(1), num(1)), num(2))
     val result  = program()
@@ -68,25 +67,32 @@ object FreezeTests extends SimpleTestSuite {
 
   object DifferentEvaluator {
     sealed trait Expr
+    case class Num(x: Int) extends Expr
+    case class Sum(x: Expr, y: Expr) extends Expr
+    case class Times(x: Expr, y: Expr) extends Expr
 
-    def num(x: Int): Expr =
-      ???
+    def num(x: Int): Expr = Num(x)
 
     def plus(x: Expr, y: Expr): Expr =
-      ???
+      Sum(x, y)
 
     def times(x: Expr, y: Expr): Expr =
-      ???
+      Times(x, y)
 
-    def eval(e: Expr): Int =
-      ???
+    def eval(e: Expr): Int = e match {
+      case Num(n) => n
+      case Sum(a, b) => eval(a) + eval(b)
+      case Times(a, b) => eval(a) * eval(b)
+    }
 
-    def evalPrint(e: Expr): String =
-      ???
+    def evalPrint(e: Expr): String =e match {
+      case Num(n) => n.toString
+      case Sum(a, b) => s"(${evalPrint(a)} + ${evalPrint(b)})"
+      case Times(a, b) => s"(${evalPrint(a)} * ${evalPrint(b)})"
+    }
   }
 
   test("execute program w/ different evaluator") {
-    ignore("implements DifferentEvaluator functions")
     import DifferentEvaluator._
     val program = times(plus(num(1), num(1)), num(2))
     assertEquals(eval(program), 4)
