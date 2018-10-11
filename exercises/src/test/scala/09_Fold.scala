@@ -39,26 +39,25 @@ object FoldTests extends SimpleTestSuite {
     val program: String => Try[String] =
       s => toi(s).map(dec).flatMap(div).map(tos)
 
-    ignore("use getOrElse to remove the Try effect")
-    val result = program("10")
-    assertEquals(result, "1")
+    val result: Try[String] = program("10")
+    assertEquals(result.getOrElse("0"), "1")
   }
 
   test("remove effect - fail") {
     val program: String => Try[String] =
       s => toi(s).map(dec).flatMap(div).map(tos)
 
-    ignore("use getOrElse to remove the Try effect")
+//    ignore("use getOrElse to remove the Try effect")
     val result = program("1")
-    assertEquals(result, "zero")
+    assertEquals(result.getOrElse("zero"), "zero")
   }
 
   test("remove effect") {
     val program: String => Try[String] =
       s => toi(s).map(dec).flatMap(div).map(tos)
 
-    ignore("use fold to remove the Try effect")
-    val result = program("1")
+//    ignore("use fold to remove the Try effect")
+    val result = program("1").fold(_.getMessage(), identity)
     assertEquals(result, DivByZeroException().getMessage)
   }
 }
