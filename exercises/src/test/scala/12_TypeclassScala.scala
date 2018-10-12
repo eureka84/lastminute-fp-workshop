@@ -28,42 +28,42 @@ object TypeclassScalaTests extends SimpleTestSuite {
     def combine(a: A, b: A): A
   }
 
-  val intSemigroup = new Semigroup[Int] {
+  implicit val intSemigroup = new Semigroup[Int] {
     def combine(a: Int, b: Int): Int = a + b
   }
 
   object Semigroup {
-    def apply[A]: Semigroup[A] = ???
+    def apply[A](implicit a: Semigroup[A]): Semigroup[A] = a
   }
 
   implicit class SemigroupOps[A](a: A) {
-    def combine(b: A): A =
-      ???
+    def combine(b: A)(implicit semi_group: Semigroup[A]): A =
+      semi_group.combine(a,b)
   }
 
   test("implicit parameter/value") {
-    def sum[A](a: Box[A], b: Box[A])(s: Semigroup[A]): Box[A] =
+    def sum[A](a: Box[A], b: Box[A])(implicit s: Semigroup[A]): Box[A] =
       Box[A](s.combine(a.value, b.value))
 
-    ignore("let sum accept Semigroup via implicit parameter")
-    assertEquals(sum(Box(42), Box(100))(intSemigroup).value, 142)
+//    ignore("let sum accept Semigroup via implicit parameter")
+    assertEquals(sum(Box(42), Box(100)).value, 142)
   }
 
   test("interface object") {
-    def sum[A](a: Box[A], b: Box[A]): Box[A] =
+    def sum[A:Semigroup](a: Box[A], b: Box[A]): Box[A] =
       Box[A](Semigroup[A].combine(a.value, b.value))
 
-    ignore("add constraint to the generic parameter A")
-    ignore("implement Semigroup.apply")
+//    ignore("add constraint to the generic parameter A")
+//    ignore("implement Semigroup.apply")
     assertEquals(sum(Box(42), Box(100)).value, 142)
   }
 
   test("interface syntax") {
-    def sum[A](a: Box[A], b: Box[A]): Box[A] =
+    def sum[A:Semigroup](a: Box[A], b: Box[A]): Box[A] =
       Box[A](a.value.combine(b.value))
 
-    ignore("add constraint to the generic parameter A")
-    ignore("implement SemigroupOps.combine")
+//    ignore("add constraint to the generic parameter A")
+//    ignore("implement SemigroupOps.combine")
     assertEquals(sum(Box(42), Box(100)).value, 142)
   }
 }
