@@ -46,8 +46,8 @@ object Usecases {
 
   sealed trait Command
   case object TurnRight extends Command
-  case object TurnLeft extends Command
-  case object Move extends Command
+  case object TurnLeft  extends Command
+  case object Move      extends Command
 
   sealed trait Direction
   case object NORTH extends Direction
@@ -66,31 +66,52 @@ object Usecases {
 
   def handleCommand(r: Rover, c: Command): Rover = c match {
     case TurnRight => r.copy(direction = rotateRight(r.direction))
-    case TurnLeft => r.copy(direction = rotateLeft(r.direction))
-    case Move => r.copy(position = move(r))
+    case TurnLeft  => r.copy(direction = rotateLeft(r.direction))
+    case Move      => r.copy(position = move(r))
   }
 
   def move(r: Rover): Position = r.direction match {
-    case _ => Position(1, 0)
+    case SOUTH => moveSouth(r.position, r.planet)
+    case NORTH => moveNorth(r.position, r.planet)
+    case EAST  => moveEast(r.position, r.planet)
+    case WEST  => moveWest(r.position, r.planet)
   }
 
-  def rotateRight(direction: Direction): Direction = {
+  def moveSouth(position: Position, planet: Planet): Position = {
+    val newX = (position.x + 1) % planet.height
+    position.copy(x = newX)
+  }
+
+  def moveNorth(position: Position, planet: Planet): Position = {
+    val newX = if (position.x > 0) position.x - 1 else planet.height - 1
+    position.copy(x = newX)
+  }
+
+  def moveEast(position: Position, planet: Planet): Position = {
+    val newY = (position.y + 1) % planet.width
+    position.copy(y = newY)
+  }
+
+  def moveWest(position: Position, planet: Planet): Position = {
+    val newY = if (position.y > 0) position.y - 1 else planet.width - 1
+    position.copy(y = newY)
+  }
+
+  def rotateRight(direction: Direction): Direction =
     direction match {
       case NORTH => EAST
-      case EAST => SOUTH
+      case EAST  => SOUTH
       case SOUTH => WEST
-      case WEST => NORTH
+      case WEST  => NORTH
     }
-  }
 
-  def rotateLeft(direction: Direction): Direction = {
+  def rotateLeft(direction: Direction): Direction =
     direction match {
       case NORTH => WEST
-      case WEST => SOUTH
+      case WEST  => SOUTH
       case SOUTH => EAST
-      case EAST => NORTH
+      case EAST  => NORTH
     }
-  }
 }
 
 object IO_Ops {
