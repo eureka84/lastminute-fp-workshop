@@ -10,7 +10,7 @@ import minitest._
  * https://typelevel.org/cats/
  *
  *
- * The following importe are required to use cats:
+ * The following imports are required to use cats:
  * - type class and interface object: cats.Functor, cats.Semigroup
  * - type class instance: cats.instances.list._, cats.instances.int._
  * - (optional) interface syntax: cats.syntax.functor._, cats.syntax.semigroup._
@@ -31,30 +31,34 @@ object TypeclassCatsTests extends SimpleTestSuite {
 
   case class Box[A](value: A)
 
-//   test("implicit parameter/value") {
-//     // import cats ...
+   test("implicit parameter/value") {
+      import cats.Semigroup
+      import cats.instances.int._
 
-//     def sum[A](a: Box[A], b: Box[A])(implicit s: Semigroup[A]): Box[A] =
-//       Box[A](s.combine(a.value, b.value))
+     def sum[A](a: Box[A], b: Box[A])(implicit s: Semigroup[A]): Box[A] =
+       Box[A](s.combine(a.value, b.value))
 
-//     assertEquals(sum(Box(42), Box(100)).value, 142)
-//   }
+     assertEquals(sum(Box(42), Box(100)).value, 142)
+   }
 
-//   test("interface object") {
-//     // import cats ...
+   test("interface object") {
+     import cats.Semigroup
+     import cats.instances.int._
 
-//     def sum[A: Semigroup](a: Box[A], b: Box[A]): Box[A] =
-//       Box[A](Semigroup[A].combine(a.value, b.value))
+     def sum[A: Semigroup](a: Box[A], b: Box[A]): Box[A] =
+       Box[A](Semigroup[A].combine(a.value, b.value))
 
-//     assertEquals(sum(Box(42), Box(100)).value, 142)
-//   }
+     assertEquals(sum(Box(42), Box(100)).value, 142)
+   }
 
-//   test("interface syntax") {
-//     // import cats ...
+   test("interface syntax") {
+     import cats.Semigroup
+     import cats.instances.int._
+     import cats.syntax.semigroup._
 
-//     def sum[A: Semigroup](a: Box[A], b: Box[A]): Box[A] =
-//       Box[A](a.value.combine(b.value))
+     def sum[A: Semigroup](a: Box[A], b: Box[A]): Box[A] =
+       Box[A](a.value.combine(b.value))
 
-//     assertEquals(sum(Box(42), Box(100)).value, 142)
-//   }
+     assertEquals(sum(Box(42), Box(100)).value, 142)
+   }
 }
