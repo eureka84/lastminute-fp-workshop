@@ -8,7 +8,7 @@ import java.io.StringReader
 object GameTests extends SimpleTestSuite {
 
   test("example") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("5x5", noObstacles, "0,0", "rrffflbb"))
 
     val expected = outputs(
@@ -24,7 +24,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("discard invalid commnds and keep going") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("5x5", noObstacles, "2,3", "frzffxrbbylbll"))
 
     val expected = outputs(
@@ -56,7 +56,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("move forward") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("10x10", noObstacles, "5,5", "ff"))
 
     val expected = outputs(
@@ -72,7 +72,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("move backward") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("10x10", noObstacles, "5,5", "bb"))
 
     val expected = outputs(
@@ -88,7 +88,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 90 to the right") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "r"))
 
     val expected = outputs(
@@ -104,7 +104,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 180 to the right") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "rr"))
 
     val expected = outputs(
@@ -120,7 +120,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 270 to the right") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "rrr"))
 
     val expected = outputs(
@@ -136,7 +136,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 360 to the right") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "rrrr"))
 
     val expected = outputs(
@@ -152,7 +152,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 90 to the left") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "l"))
 
     val expected = outputs(
@@ -168,7 +168,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 180 to the left") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "ll"))
 
     val expected = outputs(
@@ -184,7 +184,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 270 to the left") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "lll"))
 
     val expected = outputs(
@@ -200,7 +200,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("turn 360 to the left") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("2x2", noObstacles, "0,0", "llll"))
 
     val expected = outputs(

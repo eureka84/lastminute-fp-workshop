@@ -14,8 +14,8 @@ class Game {
   def runIO(): IO[Unit] =
     welcome()
       .flatMap(_ => readPlanet())
-      .flatMap(_ => readObstacles())
-      .flatMap(_ => readPosition().map(p => Rover(p, NORTH)))
+      .flatMap(p => readObstacles().map(os => p.copy(obstacles = os)))
+      .flatMap(p => readPosition().map(pos => Rover(pos, N, p)))
       .flatMap(r => readCommands().map(cs => handleCommands(r, cs)))
       .flatMap(r => display(r))
 
@@ -39,42 +39,56 @@ object Usecases {
   def readCommands(): IO[List[Command]] =
     ask("Waiting commands...").map(parseCommands)
 
-  case class Planet(width: Int, height: Int)
-  case class Obstacle()
-  case class Position(x: Int, y: Int)
-  case class Rover(position: Position, direction: Direction, planet: Planet = Planet(5, 5))
+  def display(r: Rover): IO[Unit] = puts(format(r))
 
-  sealed trait Command
-  case object TurnRight extends Command
-  case object TurnLeft  extends Command
-  case object Move      extends Command
+  def format(r: Rover): String =
+    s"${r.direction}:${r.position.x},${r.position.y}"
 
-  sealed trait Direction
-  case object NORTH extends Direction
-  case object EAST  extends Direction
-  case object SOUTH extends Direction
-  case object WEST  extends Direction
+  def parsePlanet(s: String): Planet = {
+    val width :: height :: Nil = s.split("x").toList
+    Planet(width.toInt, height.toInt)
+  }
 
-  def parsePlanet: String => Planet            = ???
-  def parseObstacles: String => List[Obstacle] = ???
-  def parsePosition: String => Position        = ???
-  def parseCommands: String => List[Command]   = ???
-  def display(r: Rover): IO[Unit]              = ???
+  def parseObstacles(s: String): List[Obstacle] = Nil
+
+  def parsePosition(s: String): Position = {
+    val x :: y :: Nil = s.split(",").toList
+    Position(x.toInt, y.toInt)
+  }
+
+  def parseCommands(s: String): List[Command] = s.map(parseCommand).toList
+
+  def parseCommand(c: Char): Command = c match {
+    case 'l' => TurnLeft
+    case 'r' => TurnRight
+    case 'f' => MoveForward
+    case 'b' => MoveBackward
+    case _   => UnkownCommand
+  }
 
   def handleCommands(r: Rover, cs: List[Command]): Rover =
     cs.foldLeft(r)(handleCommand)
 
   def handleCommand(r: Rover, c: Command): Rover = c match {
-    case TurnRight => r.copy(direction = rotateRight(r.direction))
-    case TurnLeft  => r.copy(direction = rotateLeft(r.direction))
-    case Move      => r.copy(position = move(r))
+    case TurnRight     => r.copy(direction = rotateRight(r.direction))
+    case TurnLeft      => r.copy(direction = rotateLeft(r.direction))
+    case MoveForward   => r.copy(position = moveForward(r))
+    case MoveBackward  => r.copy(position = moveBackward(r))
+    case UnkownCommand => r
   }
 
-  def move(r: Rover): Position = r.direction match {
-    case SOUTH => moveSouth(r.position, r.planet)
-    case NORTH => moveNorth(r.position, r.planet)
-    case EAST  => moveEast(r.position, r.planet)
-    case WEST  => moveWest(r.position, r.planet)
+  def moveForward(r: Rover): Position = r.direction match {
+    case S => moveSouth(r.position, r.planet)
+    case N => moveNorth(r.position, r.planet)
+    case E => moveEast(r.position, r.planet)
+    case W => moveWest(r.position, r.planet)
+  }
+
+  def moveBackward(r: Rover): Position = r.direction match {
+    case S => moveNorth(r.position, r.planet)
+    case N => moveSouth(r.position, r.planet)
+    case E => moveWest(r.position, r.planet)
+    case W => moveEast(r.position, r.planet)
   }
 
   def moveSouth(position: Position, planet: Planet): Position = {
@@ -99,19 +113,38 @@ object Usecases {
 
   def rotateRight(direction: Direction): Direction =
     direction match {
-      case NORTH => EAST
-      case EAST  => SOUTH
-      case SOUTH => WEST
-      case WEST  => NORTH
+      case N => E
+      case E => S
+      case S => W
+      case W => N
     }
 
   def rotateLeft(direction: Direction): Direction =
     direction match {
-      case NORTH => WEST
-      case WEST  => SOUTH
-      case SOUTH => EAST
-      case EAST  => NORTH
+      case N => W
+      case W => S
+      case S => E
+      case E => N
     }
+
+  case class Planet(width: Int, height: Int, obstacles: List[Obstacle] = Nil)
+  case class Obstacle()
+  case class Position(x: Int, y: Int)
+  case class Rover(position: Position, direction: Direction, planet: Planet)
+
+  sealed trait Command
+  case object TurnRight     extends Command
+  case object TurnLeft      extends Command
+  case object MoveForward   extends Command
+  case object MoveBackward  extends Command
+  case object UnkownCommand extends Command
+
+  sealed trait Direction
+  case object N extends Direction
+  case object E extends Direction
+  case object S extends Direction
+  case object W extends Direction
+
 }
 
 object IO_Ops {
