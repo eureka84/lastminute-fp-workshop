@@ -1,5 +1,6 @@
 package exercises
 
+import exercises.TypeclassIntroTests.Concrete.BoxString
 import minitest._
 
 /*
@@ -53,9 +54,14 @@ object TypeclassIntroTests extends SimpleTestSuite {
 
     case class Box[A](value: A)
 
-    def sum[A](a: Box[A], b: Box[A]): Box[A] =
-      ???
+    def sum[A](a: Box[A], b: Box[A])(implicit adder: Adder[A]): Box[A] =
+      Box(adder.+(a.value,b.value))
+
+    trait Adder[A]{
+      def +(a:A, b: A): A
+    }
   }
+
 
   test("create boxes - polymorphic") {
     import Polymorphic._
@@ -67,7 +73,10 @@ object TypeclassIntroTests extends SimpleTestSuite {
   test("sum boxes - polymorphic") {
     import Polymorphic._
 
-    ignore("implements sum[A] function")
+//    ignore("implements sum[A] function")
+
+    implicit val stringAdder: Adder[String] = _ + _
+    implicit val intAdder: Adder[Int] = _ + _
 
     assertEquals(sum(Box(42), Box(100)).value, 142)
     assertEquals(sum(Box("foo"), Box("bar")).value, "foobar")
