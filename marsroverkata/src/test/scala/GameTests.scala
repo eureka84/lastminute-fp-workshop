@@ -40,7 +40,7 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("hit an obstacle") {
-    ignore("remove me")
+//    ignore("remove me")
     val result = execute(inputs("5x5", "0,0/2,2", "0,2", "lfff"))
 
     val expected = outputs(

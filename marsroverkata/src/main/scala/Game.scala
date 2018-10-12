@@ -49,7 +49,9 @@ object Usecases {
     Planet(width.toInt, height.toInt)
   }
 
-  def parseObstacles(s: String): List[Obstacle] = Nil
+  def parseObstacles(s: String): List[Obstacle] =
+    if (s.isEmpty) Nil
+    else s.split("/").map(parsePosition).toList
 
   def parsePosition(s: String): Position = {
     val x :: y :: Nil = s.split(",").toList
@@ -66,29 +68,38 @@ object Usecases {
     case _   => UnkownCommand
   }
 
-  def handleCommands(r: Rover, cs: List[Command]): Rover =
-    cs.foldLeft(r)(handleCommand)
-
-  def handleCommand(r: Rover, c: Command): Rover = c match {
-    case TurnRight     => r.copy(direction = rotateRight(r.direction))
-    case TurnLeft      => r.copy(direction = rotateLeft(r.direction))
-    case MoveForward   => r.copy(position = moveForward(r))
-    case MoveBackward  => r.copy(position = moveBackward(r))
-    case UnkownCommand => r
+  def handleCommands(r: Rover, cs: List[Command]): Rover = cs match {
+    case c :: rest => handleCommand(r, c).fold(r)(handleCommands(_, rest))
+    case Nil => r
   }
 
-  def moveForward(r: Rover): Position = r.direction match {
-    case S => moveSouth(r.position, r.planet)
-    case N => moveNorth(r.position, r.planet)
-    case E => moveEast(r.position, r.planet)
-    case W => moveWest(r.position, r.planet)
+
+  def handleCommand(r: Rover, c: Command): Option[Rover] = c match {
+    case TurnRight     => Some(r.copy(direction = rotateRight(r.direction)))
+    case TurnLeft      => Some(r.copy(direction = rotateLeft(r.direction)))
+    case MoveForward   => moveForward(r).map(p=> r.copy(position = p))
+    case MoveBackward  => moveBackward(r).map(p=> r.copy(position = p))
+    case UnkownCommand => Some(r)
   }
 
-  def moveBackward(r: Rover): Position = r.direction match {
-    case S => moveNorth(r.position, r.planet)
-    case N => moveSouth(r.position, r.planet)
-    case E => moveWest(r.position, r.planet)
-    case W => moveEast(r.position, r.planet)
+  def moveForward(r: Rover): Option[Position] = {
+    val position = r.direction match {
+      case S => moveSouth(r.position, r.planet)
+      case N => moveNorth(r.position, r.planet)
+      case E => moveEast(r.position, r.planet)
+      case W => moveWest(r.position, r.planet)
+    }
+    tryToMove(r.planet, position)
+  }
+
+  def moveBackward(r: Rover): Option[Position] = {
+    val position = r.direction match {
+      case S => moveNorth(r.position, r.planet)
+      case N => moveSouth(r.position, r.planet)
+      case E => moveWest(r.position, r.planet)
+      case W => moveEast(r.position, r.planet)
+    }
+    tryToMove(r.planet, position)
   }
 
   def moveSouth(position: Position, planet: Planet): Position = {
@@ -111,6 +122,11 @@ object Usecases {
     position.copy(y = newY)
   }
 
+  private def tryToMove(planet: Planet, candidate: Position): Option[Position] = {
+    if (planet.obstacles.contains(candidate)) None
+    else Some(candidate)
+  }
+
   def rotateRight(direction: Direction): Direction =
     direction match {
       case N => E
@@ -128,7 +144,7 @@ object Usecases {
     }
 
   case class Planet(width: Int, height: Int, obstacles: List[Obstacle] = Nil)
-  case class Obstacle()
+  type Obstacle = Position
   case class Position(x: Int, y: Int)
   case class Rover(position: Position, direction: Direction, planet: Planet)
 
