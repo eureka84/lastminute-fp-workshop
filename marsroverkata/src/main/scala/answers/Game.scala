@@ -1,4 +1,4 @@
-package marsroverkata.answers
+package answers
 
 import scala.io.StdIn._
 

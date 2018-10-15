@@ -1,5 +1,4 @@
 package marsroverkata
-
 import marsroverkata.Data._
 
 object DataParsers {

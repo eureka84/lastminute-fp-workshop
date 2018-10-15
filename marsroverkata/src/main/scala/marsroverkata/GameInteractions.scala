@@ -1,9 +1,9 @@
 package marsroverkata
 
-import marsroverkata.Data._
-import marsroverkata.IO_Ops._
-import marsroverkata.DataParsers._
 import cats.effect.IO
+import marsroverkata.Data._
+import marsroverkata.DataParsers.{parseCommands, parseObstacles, parsePlanet, parsePosition}
+import marsroverkata.IO_Ops.{ask, puts}
 
 object GameInteractions {
 
@@ -29,9 +29,3 @@ object GameInteractions {
   }
 
 }
-
-
-
-
-
-

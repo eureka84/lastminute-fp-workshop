@@ -75,7 +75,7 @@ object FPStyle {
   }
 
   def strings(length: Int): Generator[String] =
-    listsN(alphanumerics, length).map(_.mkString)
+    listsN(alphanumerics(), length).map(_.mkString)
 
   case class Item(description: String, qty: Int, size: String)
 
@@ -96,7 +96,7 @@ object FPStyle {
     println("passed " + count + " tests")
   }
 
-  def demo() =
+  def demo(): Unit =
     test(pairs(lists(integers), lists(integers))) {
       case (xs, ys) => (xs ++ ys).length > xs.length
     }

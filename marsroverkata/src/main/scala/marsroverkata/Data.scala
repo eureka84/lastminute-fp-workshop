@@ -1,5 +1,8 @@
 package marsroverkata
 
+/**
+ * @author asciarra 
+ */
 object Data {
   case class Planet(width: Int, height: Int, obstacles: List[Obstacle] = Nil)
   type Obstacle = Position
