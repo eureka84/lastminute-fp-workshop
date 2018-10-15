@@ -6,14 +6,14 @@ object GamePlay {
 
   def handleCommands(r: Rover, cs: List[Command]): (Boolean, Rover) = cs match {
     case c :: rest => handleCommand(r, c).fold((true, r))(r => handleCommands(r, rest))
-    case Nil => (false, r)
+    case Nil       => (false, r)
   }
 
   def handleCommand(r: Rover, c: Command): Option[Rover] = c match {
-    case TurnRight     => Some(r.copy(direction = rotateRight(r.direction)))
-    case TurnLeft      => Some(r.copy(direction = rotateLeft(r.direction)))
-    case MoveForward   => moveForward(r).map(p => r.copy(position = p))
-    case MoveBackward  => moveBackward(r).map(p => r.copy(position = p))
+    case TurnRight      => Some(r.copy(direction = rotateRight(r.direction)))
+    case TurnLeft       => Some(r.copy(direction = rotateLeft(r.direction)))
+    case MoveForward    => moveForward(r).map(p => r.copy(position = p))
+    case MoveBackward   => moveBackward(r).map(p => r.copy(position = p))
     case UnknownCommand => Some(r)
   }
 
@@ -51,10 +51,9 @@ object GamePlay {
     testHitObstacles(planet, position.copy(y = newY))
   }
 
-  private def testHitObstacles(planet: Planet, candidate: Position): Option[Position] = {
+  private def testHitObstacles(planet: Planet, candidate: Position): Option[Position] =
     if (planet.obstacles.contains(candidate)) None
     else Some(candidate)
-  }
 
   def rotateRight(direction: Direction): Direction =
     direction match {
