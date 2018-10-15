@@ -40,7 +40,6 @@ object GameTests extends SimpleTestSuite {
   }
 
   test("hit an obstacle") {
-    ignore("remove me")
     val result = execute(inputs("5x5", "0,0/2,2", "0,2", "lfff"))
 
     val expected = outputs(
@@ -49,7 +48,7 @@ object GameTests extends SimpleTestSuite {
       "Where are the obstacles?",
       "What is the position of the rover?",
       "Waiting commands...",
-      "W:0,1"
+      "O:W:0,1"
     )
 
     assertEquals(result, expected)
