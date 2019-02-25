@@ -61,56 +61,54 @@ object ScalaRecap extends SimpleTestSuite {
   }
 
   test("type parameter") {
-     val p      = Person("foo", 56)
-     val result = p.eat(Apple())
-     assertEquals(result, "foo ate an apple")
+    val p      = Person("foo", 56)
+    val result = p.eat(Apple())
+    assertEquals(result, "foo ate an apple")
   }
 
   test("implicit parameter") {
 //    ignore("add a function w/ an implicit parameter to the Person class")
-     implicit val years = 30
-     val p              = Person("foo", 56)
-     val result         = p.makeYounger
-     assertEquals(result.age, 26)
+    implicit val years = 30
+    val p              = Person("foo", 56)
+    val result         = p.makeYounger
+    assertEquals(result.age, 26)
   }
 
   test("extension class") {
 //    ignore("add a function to Person via implicit class extension")
-     val p      = Person("foo", 56)
-     val result = p.toMap
-     assertEquals(result, Map("name" -> "foo", "age" -> "56"))
+    val p      = Person("foo", 56)
+    val result = p.toMap
+    assertEquals(result, Map("name" -> "foo", "age" -> "56"))
   }
 
   def isFake(person: Person): Boolean = person match {
-    case Person("bar", _) => true
-    case Person("foo", _) => true
+    case Person("bar", _)          => true
+    case Person("foo", _)          => true
     case Person(_, age) if age < 0 => true
-    case _ => false
+    case _                         => false
 
   }
 
   test("pattern match") {
-     import Person._
-     assert(isFake(Person("foo", 10)))
-     assert(isFake(Person("bar", 10)))
-     assert(isFake(Person("matte", -10)))
-     assert(!isFake(Person("matte", 10)))
+    assert(isFake(Person("foo", 10)))
+    assert(isFake(Person("bar", 10)))
+    assert(isFake(Person("matte", -10)))
+    assert(!isFake(Person("matte", 10)))
   }
 }
 case class Person(name: String, age: Int) {
   def makeYounger(implicit years: Int): Person = Person(name, age - years)
 
-
   def eat[T <: Fruit](fruit: T): String = fruit.eatenBy(name)
 
-  def apply(message: String): String = s"Ciao, mi chiamo $name!"
+  def apply(message: String): String = s"$message mi chiamo $name!"
 }
 object Person {
   def create(strValue: String): Person = {
     val parts = strValue.split(",")
     Person(parts(0), parts(1).trim.toInt)
   }
-  implicit class RichPerson(p: Person) extends Person(p.name, p.age){
+  implicit class RichPerson(p: Person) {
     def toMap: Map[String, String] =
       Map("name" -> p.name, "age" -> p.age.toString)
   }
